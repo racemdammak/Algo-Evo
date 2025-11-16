@@ -1,5 +1,6 @@
 import random
 import math
+import matplotlib.pyplot as plt
 
 # ============================
 # 🔹 1. Fonctions utilitaires
@@ -25,9 +26,36 @@ def calculer_distance_totale(solution, villes):
 def generer_voisin(solution):
     """Crée un voisin en échangeant deux positions aléatoires"""
     voisin = solution[:]
+    # Échange de deux villes avec des indices aléatoires
     i, j = random.sample(range(len(solution)), 2)
     voisin[i], voisin[j] = voisin[j], voisin[i]
     return voisin
+
+def plot_route(villes, solution, title="Route"):
+    """Affiche la route sur un graphique"""
+    x = [villes[i][0] for i in solution] + [villes[solution[0]][0]]
+    y = [villes[i][1] for i in solution] + [villes[solution[0]][1]]
+    plt.figure(figsize=(8, 6))
+    plt.plot(x, y, 'o-', markersize=8, linewidth=2, color='blue')
+    plt.scatter([v[0] for v in villes], [v[1] for v in villes], color='red', s=100, zorder=5)
+    for i, ville in enumerate(villes):
+        plt.text(ville[0], ville[1], f'{i}', fontsize=12, ha='center', va='center', color='white', weight='bold')
+    plt.title(title)
+    plt.xlabel('X')
+    plt.ylabel('Y')
+    plt.grid(True)
+    plt.axis('equal')
+    plt.show()
+
+def plot_evolution(evolution):
+    """Affiche l'évolution de la meilleure distance"""
+    plt.figure(figsize=(10, 6))
+    plt.plot(evolution, color='green', linewidth=2)
+    plt.title("Évolution de la meilleure distance au cours du recuit simulé")
+    plt.xlabel("Itération")
+    plt.ylabel("Distance totale")
+    plt.grid(True)
+    plt.show()
 
 # ============================
 # 🔹 2. Algorithme du Recuit Simulé
@@ -101,3 +129,7 @@ def recuit_simule(villes, T0=1000, Tmin=1e-3, alpha=0.995, iterations=500):
 if __name__ == "__main__":
     villes = generer_villes(10)  # 🔹 10 villes aléatoires
     meilleure_solution, meilleure_distance, evolution = recuit_simule(villes)
+
+    # Visualisations
+    plot_route(villes, meilleure_solution, "Meilleure route trouvée")
+    plot_evolution(evolution)
